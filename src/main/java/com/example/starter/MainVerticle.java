@@ -77,6 +77,7 @@ public class MainVerticle extends AbstractVerticle {
     router.get(ConstantRouter.ADD_PISHNIAZ).handler(niazha::addPishniaz);
     router.get(ConstantRouter.REMOVE_PISHNIAZ).handler(niazha::removePishnaiz);
 
+
   //owner api
     router.get(ConstantRouter.SHOW_OWNER).handler(owner::showOwner);
     router.post(ConstantRouter.ADD_OWNER).handler(owner::addOwner);
