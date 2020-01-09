@@ -25,6 +25,7 @@ public class Workshop {
     return UUID.randomUUID().toString();
   }
 
+  
   public void addWorkshop(RoutingContext ctx) {
 
     JsonObject json = ctx.getBodyAsJson();
@@ -62,14 +63,6 @@ public class Workshop {
     mongo.find(Constants.WORKSHOPS_COLLECTION, workshop, res -> {
       if (res.succeeded() && !res.result().isEmpty()) {
         JsonObject js = res.result().get(0);
-       /* JsonArray parts = js.containsKey("part") ? js.getJsonArray("part") : new JsonArray();
-        JsonObject in = new JsonObject().put("$in",parts);
-        JsonObject query = new JsonObject().put("_id",in);
-        if(!parts.getList().isEmpty()){
-          mongo.find(Constants.USERS_COLLECTION,query,found_parts ->{
-            if(found_parts.succeeded() && !found_parts.result().isEmpty()){
-              this.apiResponse.respondSuccess(ctx,js.put("parts",found_parts.result()));
-            }*/
         this.apiResponse.respondSuccess(ctx, js);
       } else {
         this.apiResponse.respondNotFound(ctx, "not found");
@@ -90,6 +83,7 @@ public class Workshop {
         }
       });
   }
+
 
   public void showPart(RoutingContext ctx) {
     String workshop_id = ctx.request().getParam("workshop_id");

@@ -6,4 +6,6 @@ public class Constants {
 
   public static  String WORKSHOPS_COLLECTION = "workshops";
 
+  public static String GROUP_COLLECTION ="group";
+
 }

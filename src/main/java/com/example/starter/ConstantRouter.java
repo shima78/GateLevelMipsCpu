@@ -10,12 +10,12 @@ public class ConstantRouter {
   public static String SHOW_WORKSHOP = "/show_workshop/:id";
   public static String SHOW_PART = "/show_part/:workshop_id";
   public static String ADD_GRAYDER = "/add_grayder/:workshop_id";
-  public static String SHOW_OWNER = "/show_owner/:workshop_id";
+  public static String SHOW_OWNER = "/show_owner/:workshop_id/:owner_id";
   public static String SHOW_REQUEST = "/show_request";
-  public static String ADD_OWNER = "/add_owner/:workshop_id";
-  public static String ADD_GROUP = "/add_group";
+  public static String ADD_OWNER = "/add_owner/:workshop_id/:owner_id";
+  public static String ADD_GROUP = "/add_group/:workshop_id";
   public static String SHOW_GROUP = "/show_group";
-  public static String LIST_WORKSHOP = "/list_workshop";
+  public static String LIST_WORKSHOP = "/list_workshopz";
   public static String LIST_USER = "/list_users";
   public static String ADD_PISHNIAZ = "/add_pishniaz/:workshop_id/:pishniaz_id";
   public static String REMOVE_PISHNIAZ = "/remove_pishniaz/:workshop_id/:pishniaz_id";
@@ -24,4 +24,9 @@ public class ConstantRouter {
   public static String SEARCH_USERS = "/search_users";
   public static String ADD_PASNIAZ="/add_pasniaz/:workshop_id/:pasniaz_id";
   public static String REMOVE_PASNIAZ="/remove_pasniaz/:workshop_id/:pasniaz_id";
+  public static String ADD_FAINACIALM ="/add_financialm/:manager_id";
+  public static String ADD_MANAGER="/add_manager/:manager_id";
+  public static String ADD_GRAYDERGROUP ="/add_groupgray/:group_id/:grayder_id";
+  public static String GRAYDER_ARSHAD ="/add_grouparshad/:workshop_id/:grayder_id";
+  public static String ADD_PARTGROUP ="/add_partgroup/:group_id/:part_id";
 }

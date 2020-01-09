@@ -31,20 +31,6 @@ public class MainVerticle extends AbstractVerticle {
       .put("connection_string", "mongodb://localhost:27017")
       .put("db_name", "cms");
 
-   /* MySQLConnectOptions connectOptions = new MySQLConnectOptions()
-      .setPort(3306)
-      .setHost("the-host")
-      .setDatabase("the-db")
-      .setUser("user")
-      .setPassword("secret");
-
-// Pool options
-    PoolOptions poolOptions = new PoolOptions()
-      .setMaxSize(5);
-
-// Create the pooled client
-    MySQLPool client = MySQLPool.pool(vertx, connectOptions, poolOptions);
-*/
 
     MongoClient mongo = MongoClient.createShared(vertx, config);
     Users users = new Users(mongo);
@@ -52,6 +38,8 @@ public class MainVerticle extends AbstractVerticle {
     Niazha niazha = new Niazha(mongo);
     Owner owner = new Owner(mongo);
     Grayder grayder = new Grayder(mongo);
+    Financialmanager financialmanager = new Financialmanager(mongo);
+    Group group = new Group(mongo);
 
     Router router = Router.router(vertx);
     router.route().handler(BodyHandler.create());
@@ -70,6 +58,7 @@ public class MainVerticle extends AbstractVerticle {
     router.post(ConstantRouter.LOG_IN).handler(users::login);
     router.get(ConstantRouter.SEARCH_USERS).handler(users::searchUserByName);
     router.delete(ConstantRouter.DELETE_USER).handler(users::deleteUser);
+    router.get(ConstantRouter.ADD_FAINACIALM).handler(financialmanager::addManager);
 
     //niazha api
     router.get(ConstantRouter.ADD_PASNIAZ).handler(niazha::addPasniaz);
@@ -80,10 +69,22 @@ public class MainVerticle extends AbstractVerticle {
 
   //owner api
     router.get(ConstantRouter.SHOW_OWNER).handler(owner::showOwner);
-    router.post(ConstantRouter.ADD_OWNER).handler(owner::addOwner);
+    router.get(ConstantRouter.ADD_OWNER).handler(owner::addOwner);
 
     //grayder api
     router.post(ConstantRouter.ADD_GRAYDER).handler(grayder::addGrayder);
+
+    //financial_manager api
+    router.get(ConstantRouter.ADD_FAINACIALM).handler(financialmanager::addManager);
+
+    //manager
+    router.get(ConstantRouter.ADD_MANAGER).handler(users::addmanager);
+
+    //group
+    router.get(ConstantRouter.ADD_GROUP).handler(group::addGroup);
+    router.get(ConstantRouter.ADD_GRAYDERGROUP).handler(group::addGrayderTogroup);
+    router.get(ConstantRouter.GRAYDER_ARSHAD).handler(group::addGrayderArshad);
+    router.get(ConstantRouter.ADD_PARTGROUP).handler(group::addPartgroup);
 
 
     vertx.createHttpServer().requestHandler(router).listen(8086);
