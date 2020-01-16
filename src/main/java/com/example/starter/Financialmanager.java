@@ -25,7 +25,7 @@ public class Financialmanager {
         JsonArray roles = user.containsKey("roles") ? user.getJsonArray("roles") : new JsonArray();
         roles.add("financial_manager");
         JsonObject update = new JsonObject().put("$set",new JsonObject().put("roles",roles));
-        mongo.updateCollection(Constants.USERS_COLLECTION,user,update,resup ->{
+        mongo.updateCollection(Constants.USERS_COLLECTION,new JsonObject().put("_id",manager_id),update,resup ->{
           if (resup.succeeded()){
             this.apiResponse.respondSuccess(ctx,user.put("roles",roles));
           }

@@ -12,6 +12,8 @@ import io.vertx.mysqlclient.MySQLPool;
 import io.vertx.sqlclient.Tuple;
 
 import javax.swing.*;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -119,32 +121,105 @@ public class Users {
       });
   }
 
-  public void addmanager(RoutingContext ctx){
-    String manager_id =ctx.request().getParam("manager_id");
-    JsonObject manager = new JsonObject().put("_id",manager_id);
-    mongo.find(Constants.USERS_COLLECTION,manager,res->{
-      if(res.succeeded() && !res.result().isEmpty()){
+  public void addmanager(RoutingContext ctx) {
+    String manager_id = ctx.request().getParam("manager_id");
+    JsonObject manager = new JsonObject().put("_id", manager_id);
+    mongo.find(Constants.USERS_COLLECTION, manager, res -> {
+      if (res.succeeded() && !res.result().isEmpty()) {
         JsonObject user = res.result().get(0);
         JsonArray roles = user.containsKey("roles") ? user.getJsonArray("roles") : new JsonArray();
         roles.add("manager");
-        JsonObject update = new JsonObject().put("$set",new JsonObject().put("roles",roles));
-        mongo.updateCollection(Constants.USERS_COLLECTION,user,update,resup ->{
-          if (resup.succeeded()){
-            this.apiResponse.respondSuccess(ctx,user.put("roles",roles));
-          }
-          else {
-            this.apiResponse.respondInternalError(ctx,"failed");
+        JsonObject update = new JsonObject().put("$set", new JsonObject().put("roles", roles));
+        mongo.updateCollection(Constants.USERS_COLLECTION,new JsonObject().put("_id",manager_id), update, resup -> {
+          if (resup.succeeded()) {
+            this.apiResponse.respondSuccess(ctx, user.put("roles", roles));
+          } else {
+            this.apiResponse.respondInternalError(ctx, "failed");
           }
         });
 
-      }
-      else {
-        this.apiResponse.respondInternalError(ctx,"this user not found");
+      } else {
+        this.apiResponse.respondInternalError(ctx, "this user not found");
       }
     });
   }
 
 
+  public void taRequest(RoutingContext ctx) {
+    String workshop_id = ctx.request().getParam("workshop_id");
+    String user_id = ctx.request().getParam("user_id");
+    JsonObject request_graydery = new JsonObject().put("user_id", user_id);
+    request_graydery.put("date_request", new Date().getTime());
+    request_graydery.put("date_result", new Date().getTime());
+    request_graydery.put("confirm", false);
+    mongo.insert(Constants.REQUEST_COLLECTION, request_graydery, res2 -> {
+      if (res2.succeeded()) {
+        mongo.find(Constants.USERS_COLLECTION, new JsonObject().put("_id", user_id), res -> {
+          if (res.succeeded() && !res.result().isEmpty()) {
+            JsonObject user = res.result().get(0);
+            mongo.find(Constants.WORKSHOPS_COLLECTION, new JsonObject().put("_id", workshop_id), res1 -> {
+              if (res1.succeeded() && !res1.result().isEmpty()) {
+                JsonObject workshop = res1.result().get(0);
+                JsonArray requests = workshop.containsKey("requests") ? workshop.getJsonArray("requests") : new JsonArray();
+                requests.add(request_graydery.getString("_id"));
+                JsonObject update_workshop = new JsonObject().put("$set", new JsonObject().put("requests", requests));
+                mongo.updateCollection(Constants.WORKSHOPS_COLLECTION,new JsonObject().put("_id",workshop_id), update_workshop, res3 -> {
+                  if (res3.succeeded()) {
+                    JsonArray request = user.containsKey("request") ? user.getJsonArray("request") : new JsonArray();
+                    request.add(request_graydery.getString("_id"));
+                    JsonObject update_user = new JsonObject().put("$set", new JsonObject().put("request", request));
+                    mongo.updateCollection(Constants.USERS_COLLECTION,new JsonObject().put("_id",user_id), update_user, res4 -> {
+                      if (res4.succeeded()) {
+                        this.apiResponse.respondSuccess(ctx, request_graydery);
+                      } else {
+                        this.apiResponse.respondInternalError(ctx, "failed");
+                      }
+                    });
+                  } else {
+                    this.apiResponse.respondInternalError(ctx, "request dont send to workshop");
+                  }
+                });
+
+              } else {
+                this.apiResponse.respondNotFound(ctx, "this workshop not found");
+              }
+            });
+
+          } else {
+            this.apiResponse.respondNotFound(ctx, "this user not found");
+          }
+        });
+      } else {
+        this.apiResponse.respondInternalError(ctx, "failed");
+      }
+    });
+
+  }
+
+  public void showUserRequest(RoutingContext ctx){
+    String user_id = ctx.request().getParam("user_id");
+    mongo.find(Constants.USERS_COLLECTION,new JsonObject().put("_id",user_id),res->{
+      if(res.succeeded() && !res.result().isEmpty()){
+        JsonObject user =res.result().get(0);
+        JsonArray request =user.containsKey("request") ? user.getJsonArray("request") : new JsonArray();
+        JsonObject in = new JsonObject().put("$in",request);
+        JsonObject query = new JsonObject().put("_id", in);
+        if (!request.getList().isEmpty()) {
+          mongo.find(Constants.REQUEST_COLLECTION, query, found_parts -> {
+            if (found_parts.succeeded() && !found_parts.result().isEmpty()) {
+              this.apiResponse.respondSuccess(ctx, new JsonObject().put("request", found_parts.result()));
+            }
+          });
+        } else {
+          this.apiResponse.respondSuccess(ctx, res.result().get(0));
+        }
+
+      }
+      else{
+        this.apiResponse.respondNotFound(ctx,"this user not found");
+      }
+    });
+  }
 
 
 }

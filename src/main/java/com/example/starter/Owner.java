@@ -43,7 +43,7 @@ public class Owner {
             JsonObject owner =res1.result().get(0);
             JsonObject update = new JsonObject().put("$set", new JsonObject()
               .put("owner",owner));
-            mongo.updateCollection(Constants.WORKSHOPS_COLLECTION,workshp,update,resup->{
+            mongo.updateCollection(Constants.WORKSHOPS_COLLECTION,new JsonObject().put("_id",workshop_id),update,resup->{
               if (resup.succeeded()){
                 this.apiResponse.respondSuccess(ctx,workshp.put("owner",owner));
               }
@@ -63,10 +63,14 @@ public class Owner {
       }
     });
 
+  }
 
 
+  public void acceptRequest(RoutingContext ctx){
+    String workshop_id=ctx.request().getParam("workshop_id");
+    mongo.find(Constants.WORKSHOPS_COLLECTION,new JsonObject().put("_id",workshop_id),res->{
 
-
+    });
   }
 
 }

@@ -40,6 +40,7 @@ public class MainVerticle extends AbstractVerticle {
     Grayder grayder = new Grayder(mongo);
     Financialmanager financialmanager = new Financialmanager(mongo);
     Group group = new Group(mongo);
+    Form form =new Form(mongo);
 
     Router router = Router.router(vertx);
     router.route().handler(BodyHandler.create());
@@ -50,6 +51,7 @@ public class MainVerticle extends AbstractVerticle {
     router.get(ConstantRouter.SHOW_WORKSHOP).handler(workshops::getWorkshop);
     router.delete(ConstantRouter.DELETE_WORKSHOP).handler(workshops::deleteWorkshop);
     router.get(ConstantRouter.SHOW_PART).handler(workshops::showPart);
+    router.get(ConstantRouter.SHOW_WORKSHOP_REQUEST).handler(workshops::showWorkshopRequest);
 
 
     //users api
@@ -59,6 +61,8 @@ public class MainVerticle extends AbstractVerticle {
     router.get(ConstantRouter.SEARCH_USERS).handler(users::searchUserByName);
     router.delete(ConstantRouter.DELETE_USER).handler(users::deleteUser);
     router.get(ConstantRouter.ADD_FAINACIALM).handler(financialmanager::addManager);
+    router.get(ConstantRouter.REQUEST_GRAYDERY).handler(users::taRequest);
+    router.get(ConstantRouter.SHOW_USER_REQUEST).handler(users::showUserRequest);
 
     //niazha api
     router.get(ConstantRouter.ADD_PASNIAZ).handler(niazha::addPasniaz);
@@ -70,6 +74,7 @@ public class MainVerticle extends AbstractVerticle {
   //owner api
     router.get(ConstantRouter.SHOW_OWNER).handler(owner::showOwner);
     router.get(ConstantRouter.ADD_OWNER).handler(owner::addOwner);
+    router.get(ConstantRouter.ACCEPT_REQUEST).handler(owner::acceptRequest);
 
     //grayder api
     router.post(ConstantRouter.ADD_GRAYDER).handler(grayder::addGrayder);
@@ -85,6 +90,13 @@ public class MainVerticle extends AbstractVerticle {
     router.get(ConstantRouter.ADD_GRAYDERGROUP).handler(group::addGrayderTogroup);
     router.get(ConstantRouter.GRAYDER_ARSHAD).handler(group::addGrayderArshad);
     router.get(ConstantRouter.ADD_PARTGROUP).handler(group::addPartgroup);
+
+    //form
+    router.get(ConstantRouter.CREATE_FORM).handler(form::createForm);
+    router.post(ConstantRouter.ADD_QUESTION_FORM).handler(form::addQuestionsToForm);
+    router.get(ConstantRouter.ANSWER_FORM).handler(form::answerToForm);
+    router.post(ConstantRouter.ADD_QUESTION_FORM).handler(form::addQuestionsToForm);
+
 
 
     vertx.createHttpServer().requestHandler(router).listen(8086);

@@ -25,7 +25,7 @@ public class Workshop {
     return UUID.randomUUID().toString();
   }
 
-  
+
   public void addWorkshop(RoutingContext ctx) {
 
     JsonObject json = ctx.getBodyAsJson();
@@ -97,18 +97,47 @@ public class Workshop {
         if (!parts.getList().isEmpty()) {
           mongo.find(Constants.USERS_COLLECTION, query, found_parts -> {
             if (found_parts.succeeded() && !found_parts.result().isEmpty()) {
-              this.apiResponse.respondSuccess(ctx, new JsonObject().put("parts", found_parts.result()));
+              this.apiResponse.respondSuccess(ctx, new JsonObject().put("request", found_parts.result()));
+            }
+            else {
+        this.apiResponse.respondNotFound(ctx, "not found");
+      }
+        });
+      }
+
+    }
+    else{
+      this.apiResponse.respondNotFound(ctx, "not found");
+    }
+    });
+
+  }
+
+  public void showWorkshopRequest(RoutingContext ctx){
+    String workshop_id = ctx.request().getParam("workshop_id");
+    mongo.find(Constants.WORKSHOPS_COLLECTION,new JsonObject().put("_id",workshop_id),res->{
+      if(res.succeeded() && !res.result().isEmpty()){
+        JsonObject workshop =res.result().get(0);
+        JsonArray request =workshop.containsKey("requests") ? workshop.getJsonArray("requests") : new JsonArray();
+        JsonObject in = new JsonObject().put("$in",request);
+        JsonObject query = new JsonObject().put("_id", in);
+        if (!request.getList().isEmpty()) {
+          mongo.find(Constants.REQUEST_COLLECTION, query, found_parts -> {
+            if (found_parts.succeeded() && !found_parts.result().isEmpty()) {
+              this.apiResponse.respondSuccess(ctx, new JsonObject().put("request", found_parts.result()));
             }
           });
         } else {
           this.apiResponse.respondSuccess(ctx, res.result().get(0));
         }
-      } else {
-        this.apiResponse.respondNotFound(ctx, "not found");
+
+      }
+      else{
+        this.apiResponse.respondNotFound(ctx,"this workshop not found");
       }
     });
-
   }
+
 
 
 }

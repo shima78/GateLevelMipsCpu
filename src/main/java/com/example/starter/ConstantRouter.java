@@ -29,4 +29,15 @@ public class ConstantRouter {
   public static String ADD_GRAYDERGROUP ="/add_groupgray/:group_id/:grayder_id";
   public static String GRAYDER_ARSHAD ="/add_grouparshad/:workshop_id/:grayder_id";
   public static String ADD_PARTGROUP ="/add_partgroup/:group_id/:part_id";
+  public static String REQUEST_GRAYDERY="/request/:workshop_id/:user_id";
+  public static String SHOW_USER_REQUEST="/user_request/:user_id";
+  public static String SHOW_WORKSHOP_REQUEST ="/workshop_request/:workshop_id";
+  public static String ACCEPT_REQUEST ="/accept_request/:workshop_id";
+  public static String CREATE_FORM="/create_form/:workshop_id/:owner_id";
+  public static String ADD_QUESTION_FORM="/add_question/:form_id";
+  public static String ANSWER_FORM="/answer_form/:form_id/:user_id";
+  public static String ANSWER_TO_QUESTION="/answer_question/:answer_id";
+
+
+
 }

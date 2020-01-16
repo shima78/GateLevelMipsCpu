@@ -36,7 +36,7 @@ public class Group {
         JsonArray grayders = group.containsKey("gtayders") ? group.getJsonArray("grayders") : new JsonArray();
         grayders.add(grayder_id);
         JsonObject update = new JsonObject().put("$set", new JsonObject().put("grayders", grayders));
-        mongo.updateCollection(Constants.GROUP_COLLECTION, group, update, res1 -> {
+        mongo.updateCollection(Constants.GROUP_COLLECTION, new JsonObject().put("_id",group_id), update, res1 -> {
           if (res1.succeeded()) {
             this.apiResponse.respondSuccess(ctx, group);
           } else {
@@ -58,7 +58,7 @@ public class Group {
       if (res.succeeded() && !res.result().isEmpty()) {
         JsonObject workshop = res.result().get(0);
         JsonObject update = new JsonObject().put("$set", new JsonObject().put("grayderArshad", grayder_id));
-        mongo.updateCollection(Constants.WORKSHOPS_COLLECTION,workshop, update, res1 -> {
+        mongo.updateCollection(Constants.WORKSHOPS_COLLECTION,new JsonObject().put("_id",workshop_id), update, res1 -> {
           if (res1.succeeded()) {
             this.apiResponse.respondSuccess(ctx, update);
           } else {
@@ -92,7 +92,7 @@ public class Group {
             if (res3.succeeded() && !res3.result().isEmpty()) {
               parts.add(part_id);
               JsonObject update = new JsonObject().put("$set", new JsonObject().put("parts", parts));
-              mongo.updateCollection(Constants.GROUP_COLLECTION, group, update, res1 -> {
+              mongo.updateCollection(Constants.GROUP_COLLECTION, new JsonObject().put("_id",group_id), update, res1 -> {
                 if (res1.succeeded()) {
                   this.apiResponse.respondSuccess(ctx, group);
                 } else {
