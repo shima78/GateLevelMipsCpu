@@ -10,10 +10,12 @@ public class Constants {
 
   public static String REQUEST_COLLECTION="request";
 
-  public static String QUESTION_COLLECTION="question";
+  public static String REGISTER_COLLECTION="register";
 
   public static String FORM_COLLECTION="form";
 
   public static String ANSWERS_COLLECTION="answers";
+
+
 
 }

@@ -33,6 +33,8 @@ public class Users {
   public void signup(RoutingContext ctx) {
 
     JsonObject json = ctx.getBodyAsJson();
+    JsonArray wokshops = new JsonArray();
+    json.put("wokshops",wokshops);
     JsonObject query = new JsonObject().put("username", json.getString("username"));
     this.mongo.find(Constants.USERS_COLLECTION, query, res -> {
       if (res.succeeded() && res.result().isEmpty()) {
@@ -150,7 +152,7 @@ public class Users {
     String user_id = ctx.request().getParam("user_id");
     JsonObject request_graydery = new JsonObject().put("user_id", user_id);
     request_graydery.put("date_request", new Date().getTime());
-    request_graydery.put("date_result", new Date().getTime());
+    //request_graydery.put("date_result", new Date().getTime());
     request_graydery.put("confirm", false);
     mongo.insert(Constants.REQUEST_COLLECTION, request_graydery, res2 -> {
       if (res2.succeeded()) {
@@ -221,6 +223,70 @@ public class Users {
     });
   }
 
+  public void showMyWorkshop(RoutingContext ctx){
+    String user_id =ctx.request().getParam("user_id");
+    mongo.find(Constants.USERS_COLLECTION,new JsonObject().put("_id",user_id),find_user->{
+      if(find_user.succeeded() && !find_user.result().isEmpty()){
+        JsonObject user =find_user.result().get(0);
+        JsonArray workshops=user.getJsonArray("workshops");
+        JsonArray my_workshop=new JsonArray();
+        for(int i=0 ; i<workshops.size();i++){
+          String workshop=workshops.getJsonObject(i).getString("workshop_id");
+          my_workshop.add(workshop);
+        }
+        JsonObject in =new JsonObject().put("$in",my_workshop);
+        JsonObject find_workshop=new JsonObject().put("_id",in);
+        if(!my_workshop.getList().isEmpty()){
+          mongo.find(Constants.WORKSHOPS_COLLECTION,find_workshop,findWorkshop->{
+            if(findWorkshop.succeeded() && !findWorkshop.result().isEmpty()){
+              this.apiResponse.respondSuccessCollection(ctx,findWorkshop.result());
+            }
+            else {
+              this.apiResponse.respondInternalError(ctx,"not found");
+            }
+          });
+        }
+        else{
+          this.apiResponse.respondInternalError(ctx,"no workshop");
+        }
+
+      }
+      else {
+        this.apiResponse.respondInternalError(ctx,"this user not found");
+      }
+    });
+  }
+
+  public void showMyRole(RoutingContext ctx){
+    String user_id =ctx.request().getParam("user_id");
+    String workshop_id=ctx.request().getParam("workshop_id");
+    mongo.find(Constants.USERS_COLLECTION,new JsonObject().put("_id",user_id),user_find->{
+      if(user_find.succeeded() && !user_find.result().isEmpty()){
+        JsonObject user =user_find.result().get(0);
+        JsonArray workshops=user.getJsonArray("workshops");
+        for(int i=0 ; i<workshops.size() ; i++){
+          if(workshop_id.equals(workshops.getJsonObject(i).getString("workshop_id"))){
+            String role=workshops.getJsonObject(i).getString("role");
+            this.apiResponse.respondSuccess(ctx,new JsonObject().put("role",role));
+          }
+        }
+      }
+      else{
+        this.apiResponse.respondInternalError(ctx,"user not found");
+      }
+    });
+  }
+
+  public void showRole(RoutingContext ctx){
+    String user_id=ctx.request().getParam("user_id");
+    mongo.find(Constants.USERS_COLLECTION,new JsonObject().put("_id",user_id),find->{
+      if(find.succeeded() && !find.result().isEmpty()){
+        JsonObject user =find.result().get(0);
+        JsonArray roles =user.getJsonArray("roles");
+        this.apiResponse.respondSuccess(ctx,new JsonObject().put("data",roles));
+      }
+    });
+  }
 
 }
 

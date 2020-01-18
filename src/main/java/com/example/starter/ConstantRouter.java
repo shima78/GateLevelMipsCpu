@@ -15,7 +15,7 @@ public class ConstantRouter {
   public static String ADD_OWNER = "/add_owner/:workshop_id/:owner_id";
   public static String ADD_GROUP = "/add_group/:workshop_id";
   public static String SHOW_GROUP = "/show_group";
-  public static String LIST_WORKSHOP = "/list_workshopz";
+  public static String LIST_WORKSHOP = "/list_workshop";
   public static String LIST_USER = "/list_users";
   public static String ADD_PISHNIAZ = "/add_pishniaz/:workshop_id/:pishniaz_id";
   public static String REMOVE_PISHNIAZ = "/remove_pishniaz/:workshop_id/:pishniaz_id";
@@ -32,12 +32,19 @@ public class ConstantRouter {
   public static String REQUEST_GRAYDERY="/request/:workshop_id/:user_id";
   public static String SHOW_USER_REQUEST="/user_request/:user_id";
   public static String SHOW_WORKSHOP_REQUEST ="/workshop_request/:workshop_id";
-  public static String ACCEPT_REQUEST ="/accept_request/:workshop_id";
+  public static String ACCEPT_REQUEST ="/accept_request/:request_id";
   public static String CREATE_FORM="/create_form/:workshop_id/:owner_id";
   public static String ADD_QUESTION_FORM="/add_question/:form_id";
   public static String ANSWER_FORM="/answer_form/:form_id/:user_id";
   public static String ANSWER_TO_QUESTION="/answer_question/:answer_id";
-
+  public static String ADD_USER_TO_FORM="/adduser_form/:form_id/:user_id";
+  public static String ADD_GROUP_TO_FORM="/addgroup_form/:form_id/:group_id";
+  public static String REGISTER_FORM="/register_form/:user_id/:wokshop_id";//monde hanoz
+  public static String SHOW_MY_WORKSHOP="/show_myworkshop/:user_id";
+  public static String SHOW_MY_ROLE="/show_myrole/:user_id/:workshop_id";
+  public static String SHOW_ROLE="/show_role/:user_id";//admin or finantional manager
+  public static String CONFIRM_GHEST="/confirm_ghest";
+  public static String ADD_PART_TO_WORKSHOP="/add_part/:workshop_id/:user_id";
 
 
 }
